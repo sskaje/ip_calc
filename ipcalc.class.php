@@ -117,15 +117,21 @@ class IPCalculator
      *
      * @param string $ip
      * @param int    $cidr
+     * @param bool   $return_ip  return IPv4 or long
      * @return bool|array   false on invalid ip or cidr, array(ipv4 subnet, ipv4 broadcast, ipv4 netmask) 
      */
-    static public function ipCidr2Subnet($ip, $cidr)
+    static public function ipCidr2Subnet($ip, $cidr, $return_ip=true)
     {
         if (self::isIPv4($ip)) {
             $ip = ip2long($ip);
         }
         list($subnet, $broadcast, $netmask) = self::_ipCidr2Subnet($ip, $cidr);
-        return array(long2ip($subnet), long2ip($broadcast), long2ip($netmask));
+
+        if ($return_ip) {
+            return array(long2ip($subnet), long2ip($broadcast), long2ip($netmask));
+        } else {
+            return array($subnet, $broadcast, $netmask);
+        }
     }
     /**
      * Convert CIDR to netmask
