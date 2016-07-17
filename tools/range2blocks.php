@@ -19,7 +19,7 @@ $begin = $argv[1];
 $end = $argv[2];
 $s = Calculator::Range2Blocks($begin, $end);
 foreach ($s as $ip) {
-    list($subnet, $broadcast, $netmask) = Calculator::ipCidr2Subnet($ip['subnet'], $ip['cidr']);
-    echo $ip['subnet'] . '/' . $ip['cidr'] . "\t" . $netmask . "\t" . $broadcast . "\n";
+    list($subnet, $broadcast, $netmask, $wildcardmask) = Calculator::ipCidr2Subnet($ip['subnet'], $ip['cidr']);
+    echo $ip['subnet'] . '/' . $ip['cidr'] . "\t" . $netmask . "\t" . $wildcardmask . "\t" . $broadcast . "\n";
 }
 

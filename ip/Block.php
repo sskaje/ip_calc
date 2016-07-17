@@ -34,7 +34,7 @@ class Block
                 list($ip, $cidr) = explode('/', $ip, 2);
             }
         }
-        list($subnet, $broadcast, $netmask) = Calculator::ipCidr2Subnet($ip, $cidr, false);
+        list($subnet, $broadcast, ) = Calculator::ipCidr2Subnet($ip, $cidr, false);
 
         return self::CreateFromInt32Range($subnet, $broadcast);
     }

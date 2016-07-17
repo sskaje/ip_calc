@@ -63,7 +63,18 @@ class BitCalculator
      */
     static public function Broadcast($ip, $netmask)
     {
-        return $ip | ((~$netmask) & 0xffffffff);
+        return $ip | self::WildcardMask($netmask);
+    }
+
+    /**
+     * Wildcard Mask
+     *
+     * @param int $netmask
+     * @return int
+     */
+    static public function WildcardMask($netmask)
+    {
+        return ((~$netmask) & 0xffffffff);
     }
 
     /**
@@ -75,11 +86,12 @@ class BitCalculator
      */
     static public function IPCIDR2All($ip, $cidr)
     {
-        $netmask   = self::CIDR2Netmask($cidr);
-        $subnet    = self::Subnet($ip, $netmask);
-        $broadcast = self::Broadcast($subnet, $netmask);
+        $netmask      = self::CIDR2Netmask($cidr);
+        $subnet       = self::Subnet($ip, $netmask);
+        $broadcast    = self::Broadcast($subnet, $netmask);
+        $wildcardmask = self::WildcardMask($netmask);
 
-        return array($subnet, $broadcast, $netmask);
+        return array($subnet, $broadcast, $netmask, $wildcardmask);
     }
 }
 

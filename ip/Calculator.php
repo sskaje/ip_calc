@@ -50,7 +50,7 @@ class Calculator
             return false;
         }
         $cidr = 32 - $pos;
-        list($subnet, $broadcast, $netmask) = BitCalculator::IPCIDR2All($begin, $cidr);
+        list($subnet, $broadcast, ) = BitCalculator::IPCIDR2All($begin, $cidr);
 
         if ($end > $broadcast) {
             $ret[] = array('subnet'=>Utils::long2ip($subnet), 'cidr'=>$cidr);
@@ -72,7 +72,7 @@ class Calculator
      * @param string $ip
      * @param int    $cidr
      * @param bool   $return_ip  return IPv4 or long
-     * @return bool|array   false on invalid ip or cidr, array(ipv4 subnet, ipv4 broadcast, ipv4 netmask) 
+     * @return bool|array   false on invalid ip or cidr, array(ipv4 subnet, ipv4 broadcast, ipv4 netmask, ipv4 wildcard mask)
      */
     static public function ipCidr2Subnet($ip, $cidr, $return_ip=true)
     {
@@ -81,12 +81,12 @@ class Calculator
 
         $ip = Utils::ip2long($ip);
 
-        list($subnet, $broadcast, $netmask) = BitCalculator::IPCIDR2All($ip, $cidr);
+        list($subnet, $broadcast, $netmask, $wildcardmask) = BitCalculator::IPCIDR2All($ip, $cidr);
 
         if ($return_ip) {
-            return array(Utils::long2ip($subnet), Utils::long2ip($broadcast), Utils::long2ip($netmask));
+            return array(Utils::long2ip($subnet), Utils::long2ip($broadcast), Utils::long2ip($netmask), Utils::long2ip($wildcardmask));
         } else {
-            return array($subnet, $broadcast, $netmask);
+            return array($subnet, $broadcast, $netmask, $wildcardmask);
         }
     }
 

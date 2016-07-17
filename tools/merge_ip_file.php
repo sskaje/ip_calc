@@ -24,7 +24,7 @@ foreach ($s as $from=>$to) {
     $ss = Calculator::Range2Blocks($from, $to);
 
     foreach ($ss as $ip) {
-        list($subnet, $broadcast, $netmask) = Calculator::ipCidr2Subnet($ip['subnet'], $ip['cidr']);
+        list($subnet, $broadcast, $netmask, ) = Calculator::ipCidr2Subnet($ip['subnet'], $ip['cidr']);
         echo $subnet . '/' . $ip['cidr'] . "\n";
     }
 }
