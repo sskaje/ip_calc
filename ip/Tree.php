@@ -25,7 +25,12 @@ class Tree
      */
     public function getBlocks()
     {
-        return $this->data;
+        # return sorted
+        $ret = [];
+        foreach ($this->data_keys as $v) {
+            $ret[$v] = $this->data[$v];
+        }
+        return $ret;
     }
 
     /**
@@ -52,9 +57,13 @@ class Tree
                 $this->data[$bn->begin] = $bn->end;
                 $this->count ++;
 
-                array_splice($this->data_keys, $insert_pos+1, 0, [$bn->begin]);
+                if ($bn->begin < $this->data_keys[$insert_pos]) {
+                    array_splice($this->data_keys, $insert_pos, 0, [$bn->begin]);
+                } else {
+                    array_splice($this->data_keys, $insert_pos+1, 0, [$bn->begin]);
+                }
             }
-
+            
             do {
                 $ret = $this->compareNeighborBlock($insert_pos);
                 if ($ret === false) {
@@ -127,21 +136,72 @@ class Tree
         }
     }
 
+    /**
+     * Delete block from current tree
+     * 
+     * @param \sskaje\ip\BlockNode $bn
+     */
     public function deleteBlock(BlockNode $bn)
     {
         if (empty($this->data)) {
             return;
         }
 
-        
+        $insert_pos = $this->getInsertPosition($bn->begin);
 
+        $i = $insert_pos;
+        do {
+            if (!isset($this->data_keys[$i])) {
+                break;
+            }
+
+            $current_begin = $this->data_keys[$i];
+            $current_end   = $this->data[$current_begin];
+
+            if ($current_begin > $bn->end) {
+                break;
+            } else if ($current_end < $bn->begin) {
+                ++ $i;
+                continue;
+            }
+
+            if ($current_begin < $bn->begin) {
+                $new_end = $bn->begin - 1;
+                $this->data[$current_begin] = $new_end;
+
+                if ($bn->end < $current_end) {
+                    # cut into two parts
+                    $new_begin = $bn->end + 1;
+                    $this->data[$new_begin] = $current_end;
+
+                    array_splice($this->data_keys, $i+1, 0, [$new_begin]);
+                    ++ $this->count;
+                }
+
+            } else { // $current_begin >= $bn->begin
+                if ($current_end <= $bn->end) {
+                    unset($this->data[$current_begin]);
+                    array_splice($this->data_keys, $i, 1);
+                    -- $this->count;
+                    -- $i;
+                } else {
+                    // new begin:
+                    $new_begin = $bn->end + 1;
+                    $this->data_keys[$i] = $new_begin;
+                    $this->data[$new_begin] = $current_end;
+                    unset($this->data[$current_begin]);
+                }
+            }
+            ++ $i;
+        } while (1);
     }
 
     /**
      * Dump keys
      */
-    protected function dump_keys()
+    public function dump_keys()
     {
+        echo "--- Dump Keys ---\n";
         foreach ($this->data_keys as $k=>$v) {
             echo $k, "\t", Utils::long2ip($v), "\n";
         }
@@ -151,10 +211,11 @@ class Tree
     /**
      * Dump blocks
      */
-    protected function dump_data()
+    public function dump_data()
     {
-        foreach ($this->data as $k=>$v) {
-            echo Utils::long2ip($k), "\t", Utils::long2ip($v), "\n";
+        echo "--- Dump Data ---\n";
+        foreach ($this->data_keys as $v) {
+            echo Utils::long2ip($v), "\t", Utils::long2ip($this->data[$v]), "\n";
         }
         echo "\n";
     }
