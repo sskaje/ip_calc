@@ -45,7 +45,7 @@ class Utils
     static public function checkIPv4($ip)
     {
         if (!self::isIPv4($ip)) {
-            throw new \Exception("{$ip} 不是IPv4");
+            throw new \Exception("{$ip} is NOT a valid IPv4 address");
         }
     }
 
@@ -82,7 +82,7 @@ class Utils
         if (self::isInt32($cidr) && $cidr >= 0 && $cidr <= 32) {
             # pass
         } else {
-            throw new \Exception("{$cidr} 不是合法的CIDR");
+            throw new \Exception("{$cidr} is NOT a valid CIDR");
         }
     }
 
