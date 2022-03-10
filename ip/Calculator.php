@@ -14,7 +14,7 @@ class Calculator
      *
      * @param string $begin
      * @param string $end
-     * @return bool|array     false on invalid ip, array(array(subnet=>, cidr=>), ...)
+     * @return array     false on invalid ip, array(array(subnet=>, cidr=>), ...)
      */
     static public function Range2Blocks($begin, $end)
     {
@@ -33,6 +33,22 @@ class Calculator
         $result = array();
         self::GetAllBlocks($begin, $end, $lsb, $result);
         return $result;
+    }
+    /**
+     * Get subnets from begin ip and end ip
+     *
+     * @param string $begin
+     * @param string $end
+     * @return Subnet[]
+     */
+    static public function Range2Subnets($begin, $end)
+    {
+        $subnets = [];
+        $blocks = self::Range2Blocks($begin, $end);
+        foreach ($blocks as $block) {
+            $subnets[] = new Subnet($block['subnet'], $block['cidr']);
+        }
+        return $subnets;
     }
 
     /**

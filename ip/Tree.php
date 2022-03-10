@@ -10,8 +10,23 @@ namespace sskaje\ip;
  */
 class Tree
 {
+    /**
+     * 网段 开始IP => 结束IP 的map
+     *
+     * @var array
+     */
     protected $data = [];
+    /**
+     * Key 的数量
+     *
+     * @var int
+     */
     protected $count = 0;
+    /**
+     * 所有网段的开始IP
+     *
+     * @var array
+     */
     protected $data_keys = [];
 
     public function __construct()
@@ -30,6 +45,34 @@ class Tree
         foreach ($this->data_keys as $v) {
             $ret[$v] = $this->data[$v];
         }
+        return $ret;
+    }
+
+
+    /**
+     * 获取网段列表
+     *
+     * @return array
+     */
+    public function getInverseBlocks()
+    {
+        # return sorted
+        $ret = [];
+        if ($this->data_keys[0] !== 0) {
+            // 右边界 - 1
+            $ret[0] = $this->data_keys[0] - 1;
+        }
+
+        for ($i = 0; $i < $this->count - 1; $i++) {
+            // 左边界 +1，右边界 - 1
+            $ret[$this->data[$this->data_keys[$i]] + 1] = $this->data_keys[$i+1] - 1;
+        }
+
+        if ($this->data[$this->data_keys[$this->count-1]] !== 0xFFFFFFFF) {
+            // 左边界 +1
+            $ret[$this->data[$this->data_keys[$this->count-1]] + 1] = 0xFFFFFFFF;
+        }
+
         return $ret;
     }
 

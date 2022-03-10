@@ -9,6 +9,9 @@ namespace sskaje\ip;
  */
 class Merge
 {
+    /**
+     * @var Tree
+     */
     protected $tree;
 
     public function __construct()
@@ -72,6 +75,21 @@ class Merge
     public function getBlocks()
     {
         $blocks = $this->tree->getBlocks();
+        $new_blocks = [];
+        foreach ($blocks as $k=>$v) {
+            $new_blocks[Utils::long2ip($k)] = Utils::long2ip($v);
+        }
+        return $new_blocks;
+    }
+    /**
+     * 获取反向IP段
+     *
+     * @return array [begin_ipv4=>end_ipv4]
+     */
+    public function getInverseBlocks()
+    {
+        $blocks = $this->tree->getInverseBlocks();
+
         $new_blocks = [];
         foreach ($blocks as $k=>$v) {
             $new_blocks[Utils::long2ip($k)] = Utils::long2ip($v);
